@@ -1,0 +1,5 @@
+{% extends "base.html" %}
+
+{% block page_content %}
+    <h1>Welcome, {% if name  %}{{ name }}{% else %}Strange{% endif %}</h1>
+{% endblock %}
