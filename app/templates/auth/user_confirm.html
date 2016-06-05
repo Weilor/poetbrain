@@ -1,4 +1,10 @@
 {% extends "base.html" %}
 
 {% block page_content %}
+    {% if confirm %}
+        <p>Your account is confirmed!</p>
+    {% else %}
+        <p>Your account has not been confirmed.If you didn't receive confirm email,click
+            <a href="{{ url_for("auth.user_reconfirm") }}">resend email</a>. </p>
+    {% endif %}
 {% endblock %}

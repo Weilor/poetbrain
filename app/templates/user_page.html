@@ -1,5 +1,16 @@
 {% extends "base.html" %}
 
 {% block page_content %}
-    <h1>Welcome, {% if name  %}{{ name }}{% else %}Strange{% endif %}</h1>
+    <div class="page-header">
+        <img class="img-rounded profile-thumbnail" src="{{ user.gavatar(size=256) }}">
+        <div class="profile-header">
+            <h1>{{ user.username }}</h1>
+            <p><b>email address:</b>{{ user.email }}</p>
+            <p><b>location:</b>{{ user.location }}</p>
+            <p><b>about_me:</b>{{ user.about_me }}</p>
+            <p><b>last_seen:</b>{{ user.last_seen }}</p>
+            <p><b>member_since:</b>{{ user.member_since }}</p>
+            <a class="btn btn-primary" href="{{ url_for("main.modify_profile") }}">Modify</a>
+        </div>
+    </div>
 {% endblock %}

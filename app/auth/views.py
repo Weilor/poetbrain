@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# encoding = utf-8
 
 from . import auth
 from flask import render_template, flash, redirect, url_for, request
@@ -7,6 +8,7 @@ from forms import LoginForm, SignupForm
 from app.models import User, db
 from app.email import send_mail
 from werkzeug.security import check_password_hash, generate_password_hash
+from datetime import datetime
 
 
 @auth.route('/login', methods=["GET", "POST"])
@@ -45,12 +47,13 @@ def user_signup():
         db.session.commit()
         token = user.generate_token()
         send_mail(to=user.email, subject="Confirm Your Account", template='auth/email/confirm', token=token, user=user)
-        flash("Register successful.Pleas log in.And a confirmed message has been sent to your email.")
+        flash("Register successful.Pleas log in.And a confirm message has been sent to your email.")
+        user.member_since = datetime.utcnow()
         return redirect(request.args.get('next') or url_for('auth.login'))
     return render_template("auth/user_signup.html", form=form)
 
 
-@auth.route('/confim/<token>')
+@auth.route('/confirm/<token>')
 @login_required
 def confirm(token):
     if current_user.confirmed:
@@ -60,3 +63,25 @@ def confirm(token):
     else:
         confirmed = False
     return render_template('auth/user_confirm.html', confirmed=confirmed)
+
+
+@auth.route('/reconfirm', methods=['GET'])
+@login_required
+def user_reconfirm():
+    if current_user.confirmed:
+        return render_template('auth/user_confirm.html', confirmed=True)
+    else:
+        token = current_user.generate_token()
+        send_mail(to=current_user.email, subject="Confirm Your Account", template='auth/email/confirm',
+                  token=token, user=current_user)
+        flash("Register successful.Pleas log in.And a confirm message has been sent to your email.")
+        return redirect(request.args.get('next') or url_for('auth.login'))
+
+
+@auth.before_app_request
+def before_request():
+    if current_user.is_authenticated:
+        current_user.ping()
+        if not current_user.confirmed and request.endpoint[:5] != "auth.":
+            return render_template("auth/user_confirm.html", confirmed=False)
+

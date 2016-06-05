@@ -1,4 +1,5 @@
 #!/bin/usr/env python
+# encoding = utf-8
 
 import os
 
@@ -7,8 +8,8 @@ class Config:
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'love my love'
     SQLALCHEMY_COMMIT_ON_TEARDOWN = True
     SQLALCHEMY_TRACK_MODIFICATIONS = True
-    FLASKY_MAIL_SUBJECT_PREFIX = '[Flasky]'
-    FLASKY_MAIL_SENDER = 'Flasky Admin <bolide2005@163.com>'
+    FLASKY_MAIL_SUBJECT_PREFIX = '[Memento Message]'
+    FLASKY_MAIL_SENDER = 'Memento Admin <bolide2005@163.com>'
     FLASKY_ADMIN = os.environ.get('FLASKY_ADMIN')
 
     @staticmethod

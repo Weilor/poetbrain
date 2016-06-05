@@ -1,12 +1,12 @@
 #!/usr/bin/env python
+# encoding = utf-8
 
 from flask_wtf import Form
-from wtforms import StringField, SubmitField, PasswordField
-from wtforms.validators import DataRequired, Length, Email
+from wtforms import StringField, SubmitField, TextAreaField
+from wtforms.validators import Length
 
 
-class SignupForm(Form):
-    email = StringField("Input your email address", validators=[DataRequired(), Email(), Length(1, 64)])
-    name = StringField("Input your name", validators=[DataRequired(), Length(1, 64)])
-    password = PasswordField("Input your password", validators=[DataRequired()])
-    submit = SubmitField("Signup")
+class ProfileForm(Form):
+    location = StringField("Location", validators=[Length(0, 64)])
+    about_me = TextAreaField("About me")
+    submit = SubmitField("Submit")
