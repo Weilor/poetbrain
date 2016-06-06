@@ -5,3 +5,19 @@
     min-height: 260px;
     margin-left: 280px;
 }
+
+.article-header {
+  padding-bottom: 9px;
+  margin: 40px 0 20px;
+  border-bottom: 3px solid #245580;
+}
+
+.search_input {
+    position:fixed;
+    _position:absolute;
+    bottom:30px;
+    _bottom:0px;
+    width:70%;
+    right: 270px;
+    _margin-top:expression(this.style.pixelHeight+document.documentElement.scrollTop)
+}

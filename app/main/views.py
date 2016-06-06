@@ -1,15 +1,16 @@
 #!/usr/bin/env python
-# encoding = utf-8
+# coding=utf-8
 
 from . import main
-from app import db
+from app import db, collect
 from forms import ProfileForm
-from flask import render_template, abort, redirect, url_for
+from flask import render_template, abort, redirect, url_for, request
 from flask_login import login_required, current_user
 from app.models import User, Prototype
+import requests
 
 
-@main.route('/')
+@main.route('/', methods=["GET"])
 def index():
     prototypes = Prototype.query.all()
     return render_template("index.html", prototypes=prototypes)
@@ -37,3 +38,20 @@ def modify_profile():
     form.about_me.data = current_user.about_me
     form.location.data = current_user.location
     return render_template('modify_profile.html', form=form, user=current_user)
+
+
+def get_article_from_search(str):
+    page_content = requests.get("http://so.gushiwen.org/search.aspx?value="+str).content
+    return collect.parse_search_result(page_content)
+
+
+@main.route('/search', methods=["GET", "POST"])
+def search():
+    form_data = request.form.get("content", default=None)
+    if form_data is None:
+        abort(404)
+    articles = get_article_from_search(form_data)
+    if articles is None:
+        abort(404)
+    return render_template("search_result.html", articles=articles)
+

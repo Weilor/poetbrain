@@ -1,12 +1,20 @@
 {% extends "base.html" %}
 
-
 {% block page_content %}
     {% for prototype in prototypes %}
-        <div class="page-header">
+        <div class="article-header">
             <h1>{{ prototype.title }}</h1>
             <p>{{ prototype.body }}</p>
+            <a class="btn btn-info">默写</a>
             <br>
         </div>
     {% endfor %}
+    <form action="/search" method="post">
+        <div class="input-group input-group-lg search_input">
+            <input name="content" type="text" id="search_input" class="form-control" placeholder="Search for...">
+            <span class="input-group-btn">
+                <button name="submit" class="btn btn-primary" type="submit">Go!</button>
+            </span>
+        </div>
+    </form>
 {% endblock %}

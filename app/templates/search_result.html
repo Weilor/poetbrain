@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block page_content %}
+    {% for article in articles %}
+        <div class="article-header">
+            <h1>{{ article["title"] }}</h1>
+            <p>{{ article["body"] }}</p>
+            <a class="btn btn-info">默写</a>
+            <br>
+        </div>
+    {% endfor %}
+{% endblock %}

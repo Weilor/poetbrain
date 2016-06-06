@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# encoding = utf-8
+# coding=utf-8
 
 from functools import wraps
 from flask_login import current_user

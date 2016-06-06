@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# encoding = utf-8
+# coding=utf-8
 
 from flask_login import current_app
 from flask_mail import Message
