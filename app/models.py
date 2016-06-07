@@ -135,17 +135,28 @@ class Prototype(db.Model):
     title = db.Column(db.String(64))
     body = db.Column(db.Text)
     body_hash = db.Column(db.String(128), unique=True, index=True)
-    info = db.Column(db.String(64))
+    dynasty = db.Column(db.String(64))
+    author = db.Column(db.String(64), index=True)
     articles = db.relationship('Article', backref="prototype", lazy='dynamic')
 
     @staticmethod
-    def add_prototype(title, body):
-        if Prototype.query.filter_by(body_hash=generate_password_hash(body)).first() is not None:
+    def add_prototype(title, dynasty, author, body):
+        if Prototype.query.filter_by(body_hash=hashlib.md5(body).hexdigest()).first() is not None:
             return False
-        prototype = Prototype(title=title, body=body, body_hash=generate_password_hash(body))
+        prototype = Prototype(title=title, dynasty=dynasty, author=author,
+                              body=body, body_hash=hashlib.md5(body).hexdigest())
         db.session.add(prototype)
         db.session.commit()
         return True
+
+    @staticmethod
+    def is_prototype_exist(author_or_title):
+        pro_list = Prototype.query.filter_by(title=author_or_title).all()
+        if (pro_list is not None) and (len(pro_list) != 0):
+            return pro_list
+        pro_list = Prototype.query.filter_by(author=author_or_title).all()
+        if (pro_list is not None) and (len(pro_list) != 0):
+            return pro_list
 
 
 class Permission:

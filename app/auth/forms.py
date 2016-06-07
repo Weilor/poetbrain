@@ -29,3 +29,4 @@ class SignupForm(Form):
     def validate_name(self, field):
         if User.query.filter_by(username=field.data).first():
             raise ValidationError('Username already in use.')
+

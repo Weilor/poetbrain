@@ -10,3 +10,8 @@ class ProfileForm(Form):
     location = StringField("Location", validators=[Length(0, 64)])
     about_me = TextAreaField("About me")
     submit = SubmitField("Submit")
+
+
+class MementoForm(Form):
+    article_text = TextAreaField("Input poem or article")
+    submit = SubmitField("Submit")

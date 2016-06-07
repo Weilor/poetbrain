@@ -4,8 +4,8 @@
     {% for prototype in prototypes %}
         <div class="article-header">
             <h1>{{ prototype.title }}</h1>
-            <p>{{ prototype.body }}</p>
-            <a class="btn btn-info">默写</a>
+            <p>{{ prototype.body | safe }}</p>
+            <a class="btn btn-info" href="{{ url_for('main.memento', prototype_id=prototype.id) }}">默写</a>
             <br>
         </div>
     {% endfor %}
