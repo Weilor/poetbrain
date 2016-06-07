@@ -107,5 +107,5 @@ def put_linesep_in(string_body):
 @main.route('/memento/<prototype_id>')
 def memento(prototype_id):
     form = MementoForm()
-    print prototype_id
-    return render_template("memento.html", form=form)
+    prototype_body = Prototype.query.filter_by(id=prototype_id).first().body
+    return render_template("memento.html", form=form, prototype=prototype_body)
