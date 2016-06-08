@@ -11,7 +11,7 @@ addr_tail = ".aspx"
 
 def get_article(page_content):
     re_remove = re.compile("</*\s*p\s*>|<\s*br\s*/*>|&.*;|\s*")
-    re_remove_tag = re.compile("<div.*/div>|\(.*\)")
+    re_remove_tag = re.compile("<div.*/div>|\(.{1,20}\)")
     re_linesep = re.compile("。")
     article = {}
     try:

@@ -3,7 +3,7 @@
 
 from datetime import datetime
 from app import db, lm
-from flask_login import UserMixin, current_app
+from flask_login import UserMixin, current_app, AnonymousUserMixin
 from flask import request
 from werkzeug.security import generate_password_hash, check_password_hash
 from itsdangerous import TimedJSONWebSignatureSerializer as Serialization
@@ -157,6 +157,19 @@ class Prototype(db.Model):
         pro_list = Prototype.query.filter_by(author=author_or_title).all()
         if (pro_list is not None) and (len(pro_list) != 0):
             return pro_list
+
+
+class AnonymousUser(AnonymousUserMixin):
+
+    @staticmethod
+    def can(permissions):
+        return False
+
+    @staticmethod
+    def is_administrator():
+        return False
+
+lm.anonymous_user = AnonymousUser
 
 
 class Permission:

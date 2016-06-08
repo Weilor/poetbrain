@@ -9,7 +9,7 @@
 .article-header {
   padding-bottom: 9px;
   margin: 40px 0 20px;
-  border-bottom: 3px solid #245580;
+  border-bottom: 3px solid #c12e2a;
 }
 
 .search_input {
@@ -17,7 +17,7 @@
     _position:absolute;
     bottom:30px;
     _bottom:0px;
-    width:70%;
-    right: 270px;
+    width:60%;
+    right: 360px;
     _margin-top:expression(this.style.pixelHeight+document.documentElement.scrollTop)
 }

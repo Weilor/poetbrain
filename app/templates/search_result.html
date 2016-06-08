@@ -3,9 +3,10 @@
 {% block page_content %}
     {% for article in articles %}
         <div class="article-header">
-            <h1>{{ article.title }}</h1>
+            <h2>{{ article.title }}</h2>
+            <h3>{{ article.author }}</h3>
             <p>{{ article.body | safe }}</p>
-            <a class="btn btn-info" href="url_for('main.memento', prototype_id={{ article.id }})">默写</a>
+            <a class="btn btn-info" href="{{ url_for('main.memento', prototype_id=article.id) }}">默写</a>
             <br>
         </div>
     {% endfor %}

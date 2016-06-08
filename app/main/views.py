@@ -10,14 +10,14 @@ from app.models import User, Prototype
 from app.decorator import admin_required
 import requests
 import re
+import copy
 
 
 @main.route('/', methods=["GET"])
 def index():
-    prototypes = Prototype.query.all()
+    prototypes = copy.deepcopy(Prototype.query.all())
     for prototype in prototypes:
         prototype.body = put_linesep_in(prototype.body)
-        print prototype.body
     return render_template("index.html", prototypes=prototypes)
 
 
@@ -70,9 +70,11 @@ def search():
         abort(404)
     if current_user.is_administrator():
         return redirect(url_for("main.search_data", form_data=form_data))
-    articles = get_article_from_db(form_data)
+    articles = copy.deepcopy(get_article_from_db(form_data))
     if articles is None:
         abort(404)
+    for article in articles:
+        article.body = put_linesep_in(article.body)
     return render_template("search_result.html", articles=articles)
 
 
@@ -100,7 +102,6 @@ def encode_string_dict(string_dict):
 def put_linesep_in(string_body):
     put_linesep = re.compile(u"。")
     string_body = put_linesep.sub(u"。<br/>", string_body)
-    print "string:%s" % string_body
     return string_body
 
 

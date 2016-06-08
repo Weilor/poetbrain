@@ -3,17 +3,20 @@
 {% block page_content %}
     {% for prototype in prototypes %}
         <div class="article-header">
-            <h1>{{ prototype.title }}</h1>
-            <p>{{ prototype.body | safe }}</p>
-            <a class="btn btn-info" href="{{ url_for('main.memento', prototype_id=prototype.id) }}">默写</a>
+            <h2>{{ prototype.title }}</h2>
+            <h3>{{ prototype.author }}</h3>
+            <h3>{{ prototype.body | safe }}</h3>
+            <a class="btn btn-primary" href="{{ url_for('main.memento', prototype_id=prototype.id) }}">默写</a>
             <br>
         </div>
     {% endfor %}
+    <br>
+    <br>
     <form action="/search" method="post">
         <div class="input-group input-group-lg search_input">
             <input name="content" type="text" id="search_input" class="form-control" placeholder="Search for...">
             <span class="input-group-btn">
-                <button name="submit" class="btn btn-primary" type="submit">Go!</button>
+                <button name="submit" class="btn btn-danger" type="submit">Go!</button>
             </span>
         </div>
     </form>
