@@ -4,7 +4,7 @@
 from . import main
 from app import db, collect
 from forms import ProfileForm, MementoForm
-from flask import render_template, abort, redirect, url_for, request
+from flask import render_template, abort, redirect, url_for, request, current_app
 from flask_login import login_required, current_user
 from app.models import User, Prototype
 from app.decorator import admin_required
@@ -13,12 +13,15 @@ import re
 import copy
 
 
-@main.route('/', methods=["GET"])
+@main.route('/', methods=["GET", "POST"])
 def index():
-    prototypes = copy.deepcopy(Prototype.query.all())
+    page = request.args.get('page', 1, type=int)
+    pagination = Prototype.query.paginate(page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
+                                              error_out=False)
+    prototypes = pagination.items
     for prototype in prototypes:
         prototype.body = put_linesep_in(prototype.body)
-    return render_template("index.html", prototypes=prototypes)
+    return render_template("index.html", prototypes=prototypes, pagination=pagination)
 
 
 @main.route('/user/<username>')

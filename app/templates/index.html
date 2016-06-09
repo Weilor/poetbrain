@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% import "_macros.html" as macros %}
 
 {% block page_content %}
     {% for prototype in prototypes %}
@@ -10,6 +11,9 @@
             <br>
         </div>
     {% endfor %}
+<div class="pagination">
+    {{ macros.pagination_widget(pagination, 'main.index') }}
+</div>
     <br>
     <br>
     <form action="/search" method="post">
