@@ -2,14 +2,13 @@
 # coding=utf-8
 
 from . import main
-from app import db, collect
+from app import db
+from app.tools import put_linesep_in, get_article_from_search, get_article_from_db, encode_string_dict, check_memento
 from forms import ProfileForm, MementoForm
 from flask import render_template, abort, redirect, url_for, request, current_app
 from flask_login import login_required, current_user
-from app.models import User, Prototype
+from app.models import User, Prototype, Article
 from app.decorator import admin_required
-import requests
-import re
 import copy
 
 
@@ -17,11 +16,17 @@ import copy
 def index():
     page = request.args.get('page', 1, type=int)
     pagination = Prototype.query.paginate(page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
-                                              error_out=False)
-    prototypes = pagination.items
+                                          error_out=False)
+    prototypes = copy.deepcopy(pagination.items)
     for prototype in prototypes:
         prototype.body = put_linesep_in(prototype.body)
     return render_template("index.html", prototypes=prototypes, pagination=pagination)
+
+
+@main.route('/spark')
+def spark():
+    articles = Article.query.order_by(Article.date.desc()).all()
+    return render_template("spark.html", articles=articles)
 
 
 @main.route('/user/<username>')
@@ -29,7 +34,7 @@ def user_page(username):
     user = User.query.filter_by(username=username).first()
     if not user:
         abort(404)
-    return render_template("user_page.html", user=user)
+    return render_template("user_page.html", user=user, articles=user.articles)
 
 
 @main.route('/modify_profile', methods=['GET', 'POST'])
@@ -46,24 +51,6 @@ def modify_profile():
     form.about_me.data = current_user.about_me
     form.location.data = current_user.location
     return render_template('modify_profile.html', form=form, user=current_user)
-
-
-def get_article_from_search(data):
-    articles = []
-    page_content = requests.get("http://so.gushiwen.org/search.aspx?value="+data).content
-    while page_content is not None:
-        articles += (collect.parse_search_result(page_content))
-        result = re.search('(/search.*)">下一页', page_content)
-        if result is not None:
-            page_content = requests.get("http://so.gushiwen.org" + result.groups()[0]).content
-        else:
-            break
-    return articles
-
-
-def get_article_from_db(author_or_title):
-    articles = Prototype.is_prototype_exist(author_or_title)
-    return articles
 
 
 @main.route('/search', methods=["GET", "POST"])
@@ -95,21 +82,18 @@ def search_data(form_data):
     return render_template("downdata_result.html", articles=articles)
 
 
-def encode_string_dict(string_dict):
-
-    for key in string_dict.keys():
-        string_dict[key] = string_dict[key].decode("utf-8").encode("gbk", "ignore")
-    return string_dict
-
-
-def put_linesep_in(string_body):
-    put_linesep = re.compile(u"。")
-    string_body = put_linesep.sub(u"。<br/>", string_body)
-    return string_body
-
-
-@main.route('/memento/<prototype_id>')
+@main.route('/memento/<prototype_id>', methods=["GET", "POST"])
 def memento(prototype_id):
     form = MementoForm()
-    prototype_body = Prototype.query.filter_by(id=prototype_id).first().body
-    return render_template("memento.html", form=form, prototype=prototype_body)
+    prototype = Prototype.query.filter_by(id=prototype_id).first()
+    if form.validate_on_submit():
+        article_text, incorrect_count = check_memento(prototype.body, form.article_text.data)
+        article = Article(title=prototype.title,
+                          body=article_text,
+                          author=current_user._get_current_object(),
+                          prototype=prototype,
+                          rate=float(incorrect_count/len(prototype.body)))
+        db.session.add(article)
+        db.session.commit()
+        return redirect(url_for("main.user_page", username=current_user.username))
+    return render_template("memento.html", form=form, prototype=prototype.title)

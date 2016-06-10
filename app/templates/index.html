@@ -2,18 +2,18 @@
 {% import "_macros.html" as macros %}
 
 {% block page_content %}
+    <div class="pagination">
+        {{ macros.pagination_widget(pagination, 'main.index') }}
+    </div>
     {% for prototype in prototypes %}
         <div class="article-header">
-            <h2>{{ prototype.title }}</h2>
-            <h3>{{ prototype.author }}</h3>
-            <h3>{{ prototype.body | safe }}</h3>
+            <h3>{{ prototype.title }}</h3>
+            <p>{{ prototype.author }}</p>
+            <p>{{ prototype.body | safe }}</p>
             <a class="btn btn-primary" href="{{ url_for('main.memento', prototype_id=prototype.id) }}">默写</a>
             <br>
         </div>
     {% endfor %}
-<div class="pagination">
-    {{ macros.pagination_widget(pagination, 'main.index') }}
-</div>
     <br>
     <br>
     <form action="/search" method="post">

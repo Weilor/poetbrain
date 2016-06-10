@@ -2,7 +2,7 @@
 {% extends "base.html" %}
 
 {% block page_content %}
-    <p>{{ prototype | safe }}</p>
+    <h3>{{ prototype | safe }}</h3>
     {{ wtf.quick_form(form) }}
 {% endblock %}
 

@@ -13,5 +13,5 @@ class ProfileForm(Form):
 
 
 class MementoForm(Form):
-    article_text = TextAreaField("Input poem or article")
+    article_text = TextAreaField("It's time to show your memento")
     submit = SubmitField("Submit")

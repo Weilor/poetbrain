@@ -3,7 +3,8 @@
 import re
 import os
 import requests as rq
-from app.models import db, Prototype
+from app.models import  Prototype
+import bleach
 
 addr_head = "http://so.gushiwen.org/view_"
 addr_tail = ".aspx"

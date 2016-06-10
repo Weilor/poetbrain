@@ -121,11 +121,11 @@ class User(UserMixin, db.Model):
 class Article(db.Model):
     __tablename__ = "articles"
     id = db.Column(db.Integer, primary_key=True)
-    body = db.Column(db.Text())
     title = db.Column(db.String(64))
+    body = db.Column(db.Text())
     author_id = db.Column(db.Integer, db.ForeignKey("users.id"))
     prototype_id = db.Column(db.Integer, db.ForeignKey("prototypes.id"))
-    date = db.Column(db.DateTime)
+    date = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     rate = db.Column(db.Float)
 
 

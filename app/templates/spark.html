@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block page_content %}
+    {% for article in articles %}
+    <div class="page-header">
+        <div class="row">
+            <div class="col-lg-2">
+                <a href="{{ url_for('main.user_page', username=article.author.username) }}">
+                <img class="img-rounded profile-thumbnail"
+                src="{{ article.author.gavatar(size=80) }}">
+                </a>
+            </div>
+            <div class="col-lg-10">
+                <p>{{ article.title }}</p>
+                <p>{{ article.date }}</p>
+                <p>{{ article.body | safe }}</p>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+{% endblock %}
