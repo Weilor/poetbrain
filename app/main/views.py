@@ -10,7 +10,7 @@ from flask_login import login_required, current_user
 from app.models import User, Prototype, Article
 from app.decorator import admin_required
 import copy
-
+from app.multi_thread_get import multi_thread_get_article
 
 @main.route('/', methods=["GET", "POST"])
 def index():
@@ -18,6 +18,7 @@ def index():
     pagination = Prototype.query.paginate(page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
                                           error_out=False)
     prototypes = copy.deepcopy(pagination.items)
+    multi_thread_get_article()
     for prototype in prototypes:
         prototype.body = put_linesep_in(prototype.body)
     return render_template("index.html", prototypes=prototypes, pagination=pagination)

@@ -36,7 +36,10 @@ def get_article(page_content):
 
 
 def start_spider(index):
+    if type(index) is not type(""):
+        index = str(index)
     addr = addr_head + index + addr_tail
+    print index
     r = rq.get(addr)
     return get_article(r.content)
 
