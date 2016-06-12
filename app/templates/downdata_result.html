@@ -1,11 +1,6 @@
+{% import "bootstrap/wtf.html" as wtf %}
 {% extends "base.html" %}
 
 {% block page_content %}
-    {% for article in articles %}
-        <div class="article-header">
-            <h1>{{ article.title }}</h1>
-            <p>{{ article.body | safe }}</p>
-            <br>
-        </div>
-    {% endfor %}
+    {{ wtf.quick_form(form) }}
 {% endblock %}

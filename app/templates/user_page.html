@@ -11,6 +11,9 @@
             <p><b>last_seen:</b>{{ user.last_seen }}</p>
             <p><b>member_since:</b>{{ user.member_since }}</p>
             <a class="btn btn-primary" href="{{ url_for("main.modify_profile") }}">Modify</a>
+            {% if user.is_administrator() %}
+            <a class="btn btn-primary" href="{{ url_for("main.update_db") }}">UpdateDB</a>
+            {% endif %}
         </div>
     </div>
     {% for article in articles %}

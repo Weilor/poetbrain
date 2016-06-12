@@ -3,7 +3,7 @@
 import re
 import os
 import requests as rq
-from app.models import  Prototype
+from app.models import Prototype
 import bleach
 
 addr_head = "http://so.gushiwen.org/view_"
@@ -25,7 +25,7 @@ def get_article(page_content):
         result = re.search(r'.*>原文.*</p>\s*(.*\n*.*)\s*</div>', page_content)
         if result is None:
             result = re.search(r'.*>原文.*</p>\s*(.*\s*<br/>\s*.*)\s*.*</div>', page_content)
-        article["body"] = re_remove_tag.sub("", re_remove.sub("", str(result.groups()[0])))\
+        article["body"] = re_remove_tag.sub("", re_remove.sub("", str(result.groups()[0]))) \
             .strip()
     except AttributeError:
         return None
@@ -36,7 +36,7 @@ def get_article(page_content):
 
 
 def start_spider(index):
-    if type(index) is not type(""):
+    if isinstance(index, type("")):
         index = str(index)
     addr = addr_head + index + addr_tail
     print index
@@ -44,15 +44,18 @@ def start_spider(index):
     return get_article(r.content)
 
 
-def parse_search_result(result):
-    clue = re.findall(r'.*href="/view_(\d*).*', result)
-    articles = []
-    f = open("f:/result_search.txt", "a+")
-    for index in clue:
-        article = start_spider(index)
-        if article is not None:
-            articles.append(article)
-        else:
-            f.write(index + os.linesep)
-    f.close()
-    return articles
+def parse_search_result(c_app, result):
+    with c_app.app_context():
+        clue = re.findall(r'.*href="/view_(\d*).*', result)
+        print clue.__repr__()
+        articles = []
+        f = open("f:/result_search.txt", "a+")
+        for index in clue:
+            print index
+            article = start_spider(index)
+            if article is not None:
+                articles.append(article)
+            else:
+                f.write(index + os.linesep)
+        f.close()
+        return articles

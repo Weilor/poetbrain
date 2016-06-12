@@ -4,19 +4,23 @@ import requests
 import re
 from app.models import Prototype
 from app import collect
+from threading import Thread
 
 
-def get_article_from_search(data):
-    articles = []
-    page_content = requests.get("http://so.gushiwen.org/search.aspx?value="+data).content
-    while page_content is not None:
-        articles += (collect.parse_search_result(page_content))
-        result = re.search('(/search.*)">下一页', page_content)
-        if result is not None:
-            page_content = requests.get("http://so.gushiwen.org" + result.groups()[0]).content
-        else:
-            break
-    return articles
+def get_article_from_search(c_app, address):
+    with c_app.app_context():
+        print address
+        page_content = requests.get(address).content
+        while page_content is not None:
+            thr = Thread(target=collect.parse_search_result, args=[c_app, page_content])
+            thr.start()
+            print thr.__repr__()
+            result = re.search('href="(.*)">下一页', page_content)
+            if result is not None:
+                page_content = requests.get("http://so.gushiwen.org" + result.groups()[0]).content
+            else:
+                break
+        return
 
 
 def get_article_from_db(author_or_title):

@@ -4,13 +4,13 @@
 from . import main
 from app import db
 from app.tools import put_linesep_in, get_article_from_search, get_article_from_db, encode_string_dict, check_memento
-from forms import ProfileForm, MementoForm
+from forms import ProfileForm, MementoForm, UpdateDataForm
 from flask import render_template, abort, redirect, url_for, request, current_app
 from flask_login import login_required, current_user
 from app.models import User, Prototype, Article
-from app.decorator import admin_required
 import copy
-from app.multi_thread_get import multi_thread_get_article
+from threading import Thread
+
 
 @main.route('/', methods=["GET", "POST"])
 def index():
@@ -18,7 +18,6 @@ def index():
     pagination = Prototype.query.paginate(page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
                                           error_out=False)
     prototypes = copy.deepcopy(pagination.items)
-    multi_thread_get_article()
     for prototype in prototypes:
         prototype.body = put_linesep_in(prototype.body)
     return render_template("index.html", prototypes=prototypes, pagination=pagination)
@@ -59,8 +58,8 @@ def search():
     form_data = request.form.get("content", default=None)
     if form_data is None:
         abort(404)
-    if current_user.is_administrator():
-        return redirect(url_for("main.search_data", form_data=form_data))
+    # if current_user.is_administrator():
+    #     return redirect(url_for("main.search_data", form_data=form_data))
     articles = copy.deepcopy(get_article_from_db(form_data))
     if articles is None:
         abort(404)
@@ -68,19 +67,32 @@ def search():
         article.body = put_linesep_in(article.body)
     return render_template("search_result.html", articles=articles)
 
+# 适配多线程重构代码
+# @main.route('/search_data/<form_data>', methods=["GET", "POST"])
+# @admin_required
+# def search_data(form_data):
+#     if form_data is None:
+#         abort(404)
+#     articles = get_article_from_search(form_data)
+#     if articles is None:
+#         abort(404)
+#     for article in articles:
+#         article = encode_string_dict(article)
+#         article["body"] = put_linesep_in(article["body"])
+#     return render_template("downdata_result.html", articles=articles)
 
-@main.route('/search_data/<form_data>', methods=["GET", "POST"])
-@admin_required
-def search_data(form_data):
-    if form_data is None:
-        abort(404)
-    articles = get_article_from_search(form_data)
-    if articles is None:
-        abort(404)
-    for article in articles:
-        article = encode_string_dict(article)
-        article["body"] = put_linesep_in(article["body"])
-    return render_template("downdata_result.html", articles=articles)
+
+@main.route("/update_db", methods=["GET", "POST"])
+def update_db():
+    form = UpdateDataForm()
+    if form.validate_on_submit():
+        if form.dynasty_or_author.data == 'dynasty':
+            address = "http://so.gushiwen.org/type.aspx?p=1&c=" + form.d_or_a_text.data
+        else:
+            address = "http://so.gushiwen.org/search.aspx?value=" + form.d_or_a_text.data
+        thr = Thread(target=get_article_from_search, args=[current_app._get_current_object(), address])
+        thr.start()
+    return render_template("downdata_result.html", form=form)
 
 
 @main.route('/memento/<prototype_id>', methods=["GET", "POST"])
