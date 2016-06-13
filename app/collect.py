@@ -49,13 +49,9 @@ def parse_search_result(c_app, result):
         clue = re.findall(r'.*href="/view_(\d*).*', result)
         print clue.__repr__()
         articles = []
-        f = open("f:/result_search.txt", "a+")
         for index in clue:
             print index
             article = start_spider(index)
             if article is not None:
                 articles.append(article)
-            else:
-                f.write(index + os.linesep)
-        f.close()
         return articles
