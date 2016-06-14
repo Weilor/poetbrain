@@ -96,6 +96,7 @@ def update_db():
 
 
 @main.route('/memento/<prototype_id>', methods=["GET", "POST"])
+@login_required
 def memento(prototype_id):
     form = MementoForm()
     prototype = Prototype.query.filter_by(id=prototype_id).first()

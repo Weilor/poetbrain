@@ -29,6 +29,7 @@ def get_article(page_content):
             .strip()
     except AttributeError:
         return None
+    print article["body"]
     if Prototype.add_prototype(article["title"], article["dynasty"], article["author"], article["body"]) is False:
         return None
     article["body"] = re_linesep.sub("。<br/>", article["body"])
