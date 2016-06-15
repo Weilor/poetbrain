@@ -16,6 +16,14 @@ def load_user(user_id):
 
 
 class Role(db.Model):
+    """
+    用户角色模型
+    id          :key键
+    name        :角色名称
+    default     :默认角色控制
+    permission  :角色权限
+    users       :用户的反向调用
+    """
     __tablename__ = "roles"
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64), unique=True)
@@ -25,6 +33,9 @@ class Role(db.Model):
 
     @staticmethod
     def insert_roles():
+        """
+        用于向数据库自动插入角色
+        """
         roles = {
             "Admin": [
                 Permission.FOLLOW | Permission.COMMENT | Permission.WRITE_ARTICLES | Permission.MODERATE_COMMENTS |
@@ -48,6 +59,21 @@ class Role(db.Model):
 
 
 class User(UserMixin, db.Model):
+    """
+    用户的数据库模型
+    继承了两个类，其中UserMixin是Flask-login要求的用户类，用于执行各类登录登出操作
+    id            :key值
+    username      :用户名
+    email         :注册邮箱
+    location      :地址
+    about_me      :自我简介
+    password_hash :密码哈希值
+    role_id       :角色ID，外键
+    confirmed     :邮箱是否验证
+    last_seen     :上次登录时间
+    member_since  :注册时间
+    article       :用户文章，外键反向回指
+    """
     __tablename__ = "users"
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(64), unique=True, index=True)
@@ -71,6 +97,9 @@ class User(UserMixin, db.Model):
 
     @property
     def password(self):
+        """
+        密码设为property，不可读取，在数据库中以hash值存储，增加安全性
+        """
         raise AttributeError("password can not be read!")
 
     @password.setter

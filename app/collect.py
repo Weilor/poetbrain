@@ -11,6 +11,12 @@ addr_tail = ".aspx"
 
 
 def get_article(page_content):
+    """
+    这是爬虫解析的主体，爬取下来的网页中，这里主要关注诗歌古文的朝代、作者以及原文，通过正则匹配相关的字符串并存储。
+    由于这个古诗文网站写的比较奇葩，原文附近的字符串不是一模一样的，而如果选择了宽泛的表达式，有导致正确率降低，因此
+    这里做了两次提取。这部分很尴尬，以后技术提升后进行重构。
+    :param page_content 爬取下来的网页内容，字符串形式
+    """
     re_remove = re.compile("</*\s*p\s*>|<\s*br\s*/*>|&.*;|\s*")
     re_remove_tag = re.compile("<div.*/div>|\(.{1,20}\)")
     re_linesep = re.compile("。")

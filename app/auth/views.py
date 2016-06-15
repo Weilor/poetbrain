@@ -56,6 +56,11 @@ def user_signup():
 @auth.route('/confirm/<token>')
 @login_required
 def confirm(token):
+    """
+    This  view  handle the request that confirming email send.To check the token that email send with the token that
+    current user generates,this view will confirm user's email address.
+    :param token,the confirm email send to app
+    """
     if current_user.confirmed:
         return redirect(url_for('main.index'))
     elif current_user.check_token(token):
@@ -68,6 +73,9 @@ def confirm(token):
 @auth.route('/reconfirm', methods=['GET'])
 @login_required
 def user_reconfirm():
+    """
+    When user can't receive the confirm email,app can resend the email through this view.
+    """
     if current_user.confirmed:
         return render_template('auth/user_confirm.html', confirmed=True)
     else:

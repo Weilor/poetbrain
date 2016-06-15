@@ -8,6 +8,10 @@ from app.models import Permission
 
 
 def permission_required(permission):
+    """
+    Decorator,to make fun's caller must has some permission
+    :param permission,permission required
+    """
     def wrapper(f):
         @wraps(f)
         def decorated_f(*args, **kwargs):
@@ -19,4 +23,8 @@ def permission_required(permission):
 
 
 def admin_required(f):
+    """
+    Decorator,to make fun's caller must has admin permission.
+    :param f,fun to be decorated
+    """
     return permission_required(Permission.ADMINISTER)(f)
